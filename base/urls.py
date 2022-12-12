@@ -1,0 +1,5 @@
+path("list/", views.modelnames_view, name="modelnames"),
+path("create/", views.modelname_create_view, name="create_modelname"),
+path("detail/<pk>/", views.modelname_detail_view, name="detail_modelname"),
+path("update/<pk>/", views.modelname_update_view, name="update_modelname"),
+path("delete/<pK>/", views.modelname_delete_view, name="delete_modelname") ,
