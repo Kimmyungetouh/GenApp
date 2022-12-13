@@ -36,7 +36,7 @@ def generate_crud_urls(app_name, gen_template_dir):
     models = get_models_name(app_name)
     try:
         try:
-            os.mkdir(app_name)
+            os.mkdir(app_name.lower())
         except:
             pass
 
@@ -70,7 +70,7 @@ def generate_crud_views(app_name, gen_template_dir):
     models = get_models_name(app_name)
     try:
         try:
-            os.mkdir(app_name)
+            os.mkdir(app_name.lower())
         except:
             pass
         with open(os.path.join(app_name, "views.py"), "w+") as file:
@@ -112,7 +112,7 @@ def generate_forms(app_name: str, gen_template_dir: str):
     models = get_models_name(app_name)
     try:
         try:
-            os.mkdir(app_name)
+            os.mkdir(app_name.lower())
         except:
             pass
         with open(os.path.join(app_name, "forms.py"), "w+") as forms_file:
