@@ -51,7 +51,6 @@ app_name = '{}'
 urlpatterns = [
             """.format(app_name.lower()), file=urls_file)
             for model in models:
-                str_model = str(model.__name__) if isinstance(model, ModelBase) else str(model)
                 with open(os.path.join(gen_template_dir, "urls.py"), "rt+") as urls_base_file:
                     lines = urls_base_file.readlines()
                     for line in lines:

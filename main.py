@@ -28,8 +28,8 @@ except FileExistsError as e:
 os.chdir(app_clone_dir)
 
 for app_to_process in get_apps(app_dir):
-    generate_crud_urls(app_name=app_to_process, gen_template_dir=gen_template_dir)
-    generate_crud_views(app_name=app_to_process, gen_template_dir=gen_template_dir)
-    generate_forms(app_name=app_to_process, gen_template_dir=gen_template_dir)
+    generate_crud_urls(app_name=app_to_process, gen_template_dir=f"../{gen_template_dir}")
+    generate_crud_views(app_name=app_to_process, gen_template_dir=f"../{gen_template_dir}")
+    generate_forms(app_name=app_to_process, gen_template_dir=f"../{gen_template_dir}")
 
 os.chdir("..")
