@@ -1,9 +1,24 @@
 import os
-from typing import List
 from django.db.models.base import ModelBase
 from django.apps import apps
 
 excluded = []
+
+
+def get_apps(app_dir: str):
+    app_list = []
+    os.chdir(app_dir)
+    for potential_app in os.listdir():
+        try:
+            os.chdir(potential_app)
+            for fs_object in os.listdir():
+                if fs_object == "apps.py":
+                    app_list.append(potential_app)
+            os.chdir("..")
+        except NotADirectoryError as e:
+            print(f"{e}")
+    os.chdir("..")
+    return app_list
 
 
 def get_models_name(app_name):
@@ -17,7 +32,7 @@ def get_models_name(app_name):
     return models_names
 
 
-def generate_crud_urls(app_name):
+def generate_crud_urls(app_name, gen_template_dir):
     models = get_models_name(app_name)
     try:
         try:
@@ -37,7 +52,7 @@ urlpatterns = [
             """.format(app_name.lower()), file=urls_file)
             for model in models:
                 str_model = str(model.__name__) if isinstance(model, ModelBase) else str(model)
-                with open(os.path.join("base", "urls.py"), "rt+") as urls_base_file:
+                with open(os.path.join(gen_template_dir, "urls.py"), "rt+") as urls_base_file:
                     lines = urls_base_file.readlines()
                     for line in lines:
                         urls_file.write(line.replace("modelname", model.lower()))
@@ -52,7 +67,7 @@ urlpatterns = [
         os.system(command)
 
 
-def generate_crud_views(app_name):
+def generate_crud_views(app_name, gen_template_dir):
     models = get_models_name(app_name)
     try:
         try:
@@ -74,7 +89,7 @@ from .forms import *
                 """, file=file)
 
             for model in models:
-                with open(os.path.join("base", "views.py"), "rt") as read_file:
+                with open(os.path.join(gen_template_dir, "views.py"), "rt") as read_file:
                     lines = read_file.readlines()
                     print("Start procesing for {} model \n".format(model))
                     for line in lines:
@@ -94,7 +109,7 @@ from .forms import *
         os.system(command)
 
 
-def generate_forms(app_name: str):
+def generate_forms(app_name: str, gen_template_dir: str):
     models = get_models_name(app_name)
     try:
         try:
@@ -109,7 +124,7 @@ from . import models
 
                   """, file=forms_file)
             for model in models:
-                with open(os.path.join("base", "forms.py"), "rt+") as forms_base_file:
+                with open(os.path.join(gen_template_dir, "forms.py"), "rt+") as forms_base_file:
                     lines = forms_base_file.readlines()
                     for line in lines:
                         forms_file.write(line.replace("ModelName", model))
