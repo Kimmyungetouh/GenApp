@@ -96,6 +96,10 @@ from .forms import *
         print("Views created !")
     except:
         pass
+    finally:
+        command = f"black {app_name}/views.py"
+        print(command)
+        os.system(command)
 
 
 def generate_forms(app_name: str, models: List[str | ModelBase]):
@@ -122,6 +126,10 @@ from . import models
             forms_file.close()
     except Exception as e:
         print(f"{e}")
+    finally:
+        command = f"black {app_name}/forms.py"
+        print(command)
+        os.system(command)
 
 
 generate_crud_urls(app_name="TestApp", models=["Model1", "Model2", "Model3"])
