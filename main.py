@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from django.db.models.base import ModelBase
 
@@ -25,17 +26,6 @@ def crud_urls(model: str | ModelBase) -> str:
     return urls
 
 
-# def write_crud_views(app_name: str, model: str | ModelBase) -> str:
-#     str_model = str(model.__name__) if isinstance(model, ModelBase) else str(model)
-#
-#     with open(os.path.join("base", "views.py"), "rt") as read_file:
-#         with open(os.path.join(app_name, "views.py"), "w+") as print_file:
-#             for line in read_file.readlines():
-#                 print(line.replace("app_name", app_name.lower()).replace("modelname", str_model.lower()).replace("ModelName", str_model).replace("\n", ""), file=print_file)
-#             print_file.close()
-#         read_file.close()
-
-
 def generate_crud_urls(app_name, models):
     try:
         try:
@@ -43,19 +33,31 @@ def generate_crud_urls(app_name, models):
         except:
             pass
 
-        with open(os.path.join(app_name, "urls.py"), "w+") as file:
+        with open(os.path.join(app_name, "urls.py"), "w+") as urls_file:
             print("""
 from django.urls import path
 from . import views
-            """, file=file)
-            print("app_name={}\nurlpatterns = [\n".format(app_name), file=file)
+
+
+app_name = '{}'
+
+urlpatterns = [
+            """.format(app_name.lower()), file=urls_file)
             for model in models:
-                print(model)
-                print(crud_urls(model), file=file)
-            print("]", file=file)
-            file.close()
+                str_model = str(model.__name__) if isinstance(model, ModelBase) else str(model)
+                with open(os.path.join("base", "urls.py"), "rt+") as urls_base_file:
+                    lines = urls_base_file.readlines()
+                    for line in lines:
+                        urls_file.write(line.replace("modelname", str_model.lower()))
+                    urls_base_file.close()
+            print("]", file=urls_file)
+            urls_file.close()
     except Exception as e:
         print("*" * 10, f" {e} ", "*" * 10)
+    finally:
+        command = f"black {app_name}/urls.py"
+        print(command)
+        os.system(command)
 
 
 def generate_crud_views(app_name, models):
@@ -96,5 +98,32 @@ from .forms import *
         pass
 
 
+def generate_forms(app_name: str, models: List[str | ModelBase]):
+
+    try:
+        try:
+            os.mkdir(app_name)
+        except:
+            pass
+        with open(os.path.join(app_name, "forms.py"), "w+") as forms_file:
+            print("""
+from django.forms import ModelForm
+from . import models
+
+
+                  """, file=forms_file)
+            for model in models:
+                str_model = str(model.__name__) if isinstance(model, ModelBase) else str(model)
+                with open(os.path.join("base", "forms.py" ), "rt+") as forms_base_file:
+                    lines = forms_base_file.readlines()
+                    for line in lines:
+                        forms_file.write(line.replace("ModelName", str_model))
+                    forms_base_file.close()
+            forms_file.close()
+    except Exception as e:
+        print(f"{e}")
+
+
 generate_crud_urls(app_name="TestApp", models=["Model1", "Model2", "Model3"])
 generate_crud_views(app_name="TestApp", models=["Model1", "Model2", "Model3"])
+generate_forms(app_name="TestApp", models=["Model1", "Model2", "Model3"])
