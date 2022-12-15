@@ -6,11 +6,11 @@ def modelnames_view(request: HttpRequest):
         messages.success(request, _(f"{ModelName._meta.verbose_name}, created !"))
         return redirect(reverse("app_name:modelnames"))
     else:
-        messages.error(request, _(f"{ModelName._meta.verbose_name}, cannot be created, an error occured !"))
-    context = {
-        "modelnames": modelnames,
-        "form": form
-    }
+        messages.error(
+            request,
+            _(f"{ModelName._meta.verbose_name}, cannot be created, an error occured !"),
+        )
+    context = {"modelnames": modelnames, "form": form}
     return TemplateResponse(request, "app_name/modelname/list.html", context)
 
 
@@ -21,10 +21,11 @@ def modelname_create_view(request: HttpRequest):
         messages.success(request, _(f"{ModelName._meta.verbose_name}, created !"))
         return redirect(reverse("app_name:modelnames"))
     else:
-        messages.error(request, _(f"{ModelName._meta.verbose_name}, cannot be created, an error occured !"))
-    context = {
-        "form": form
-    }
+        messages.error(
+            request,
+            _(f"{ModelName._meta.verbose_name}, cannot be created, an error occured !"),
+        )
+    context = {"form": form}
     return TemplateResponse(request, "app_name/modelname/create.html", context)
 
 
@@ -36,11 +37,11 @@ def modelname_update_view(request: HttpRequest, pk):
         messages.success(request, _(f"{ModelName._meta.verbose_name}, updated !"))
         return redirect(reverse("app_name:modelnames"))
     else:
-        messages.error(request, _(f"{ModelName._meta.verbose_name}, cannot be updated, an error occured !"))
-    context = {
-        "form": form,
-        "modelname": modelname
-    }
+        messages.error(
+            request,
+            _(f"{ModelName._meta.verbose_name}, cannot be updated, an error occured !"),
+        )
+    context = {"form": form, "modelname": modelname}
     return TemplateResponse(request, "app_name/modelname/update.html", context)
 
 
@@ -52,7 +53,8 @@ def modelname_delete_view(request: HttpRequest, pk):
 
     except Exception as e:
         print(e)
-        messages.error(request, _(f"{ModelName._meta.verbose_name}, cannot be deleted, an error occured !"))
+        messages.error(
+            request,
+            _(f"{ModelName._meta.verbose_name}, cannot be deleted, an error occured !"),
+        )
     return redirect(reverse("app_name:modelnames"))
-
-

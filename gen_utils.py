@@ -1,4 +1,5 @@
 import os
+from django.conf import settings
 from django.db.models.base import ModelBase
 from django.apps import apps
 
@@ -18,6 +19,9 @@ def get_apps(app_dir: str):
         except NotADirectoryError as e:
             print(f"{e}")
     os.chdir("..")
+    installed_app_list = [app.split(".")[-1] for app in settings.INSTALLED_APPS]
+    app_list = [app for app in app_list if app in installed_app_list]
+    print(app_list)
     return app_list
 
 
@@ -41,7 +45,8 @@ def generate_crud_urls(app_name, gen_template_dir):
             pass
 
         with open(os.path.join(app_name, "urls.py"), "w+") as urls_file:
-            print("""
+            print(
+                """
 from django.urls import path
 from . import views
 
@@ -49,9 +54,15 @@ from . import views
 app_name = '{}'
 
 urlpatterns = [
-            """.format(app_name.lower()), file=urls_file)
+            """.format(
+                    app_name.lower()
+                ),
+                file=urls_file,
+            )
             for model in models:
-                with open(os.path.join(gen_template_dir, "urls.py"), "rt+") as urls_base_file:
+                with open(
+                    os.path.join(gen_template_dir, "urls.py"), "rt+"
+                ) as urls_base_file:
                     lines = urls_base_file.readlines()
                     for line in lines:
                         urls_file.write(line.replace("modelname", model.lower()))
@@ -74,7 +85,8 @@ def generate_crud_views(app_name, gen_template_dir):
         except:
             pass
         with open(os.path.join(app_name, "views.py"), "w+") as file:
-            print("""
+            print(
+                """
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -85,18 +97,29 @@ from .models import *
 from .forms import *
 
 
-                """, file=file)
+                """,
+                file=file,
+            )
 
             for model in models:
-                with open(os.path.join(gen_template_dir, "views.py"), "rt") as read_file:
+                with open(
+                    os.path.join(gen_template_dir, "views.py"), "rt"
+                ) as read_file:
                     lines = read_file.readlines()
                     print("Start procesing for {} model \n".format(model))
                     for line in lines:
                         print(
-                            line.replace("app_name", app_name.lower()).replace("modelname", model.lower()).replace(
-                                "ModelName", model).replace("\n", ""), file=file)
-                    print("End procesing for {} model \n".format(
-                        model.__name__ if isinstance(model, ModelBase) else model))
+                            line.replace("app_name", app_name.lower())
+                            .replace("modelname", model.lower())
+                            .replace("ModelName", model)
+                            .replace("\n", ""),
+                            file=file,
+                        )
+                    print(
+                        "End procesing for {} model \n".format(
+                            model.__name__ if isinstance(model, ModelBase) else model
+                        )
+                    )
                 read_file.close()
             file.close()
         print("Views created !")
@@ -116,14 +139,19 @@ def generate_forms(app_name: str, gen_template_dir: str):
         except:
             pass
         with open(os.path.join(app_name, "forms.py"), "w+") as forms_file:
-            print("""
+            print(
+                """
 from django.forms import ModelForm
-from . import models
+from models import *
 
 
-                  """, file=forms_file)
+                  """,
+                file=forms_file,
+            )
             for model in models:
-                with open(os.path.join(gen_template_dir, "forms.py"), "rt+") as forms_base_file:
+                with open(
+                    os.path.join(gen_template_dir, "forms.py"), "rt+"
+                ) as forms_base_file:
                     lines = forms_base_file.readlines()
                     for line in lines:
                         forms_file.write(line.replace("ModelName", model))
