@@ -1,5 +1,5 @@
 def modelnames_view(request: HttpRequest):
-    modelnames = Modelname.objects.all()
+    modelnames = ModelName.objects.all()
     form = ModelNameForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         form.save()
